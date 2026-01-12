@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         :root {
             --primary: #4f46e5;
@@ -23,232 +24,73 @@
             --radius-md: 10px;
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
         }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Plus Jakarta Sans', sans-serif; background: var(--bg-app); color: var(--text-dark); display:flex; min-height:100vh; overflow-x:hidden; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* LOGIN */
+        #auth-container { position: fixed; inset:0; background: linear-gradient(135deg,#1e293b 0%,#0f172a 100%); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; }
+        .auth-card { background:white; padding:40px; border-radius:24px; width:100%; max-width:400px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); text-align:center; }
+        .auth-logo { font-size:2rem; color: var(--primary); margin-bottom:30px; font-weight:800; }
+        .auth-card h2 { margin-bottom:10px; font-size:22px; }
+        .auth-card p { color: var(--secondary); margin-bottom:25px; font-size:14px; }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg-app); 
-            color: var(--text-dark);
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        nav { width: var(--sidebar-width); background:#1e293b; color:white; display:flex; flex-direction:column; padding:20px; position:fixed; height:100vh; transition:0.3s; z-index:1000; }
+        .logo { font-size:1.5rem; font-weight:700; margin-bottom:40px; display:flex; align-items:center; gap:10px; color:#fff; }
+        .nav-item { padding:14px 18px; border-radius: var(--radius-md); cursor:pointer; margin-bottom:8px; display:flex; align-items:center; gap:12px; color:#94a3b8; transition:0.3s; }
+        .nav-item:hover, .nav-item.active { background: var(--primary); color:white; }
+        main { flex:1; margin-left: var(--sidebar-width); padding:40px; transition:0.3s; }
+        .section { display:none; animation:fadeIn 0.4s ease; }
+        .section.active { display:block; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-        /* --- SISTEMA DE LOGIN --- */
-        #auth-container {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            padding: 20px;
-        }
+        .header-title h1 { font-size:24px; font-weight:700; color: var(--text-dark); margin-bottom:10px; }
+        .header-title p { color: var(--secondary); font-size:14px; }
 
-        .auth-card {
-            background: white;
-            padding: 40px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            text-align: center;
-        }
+        .card { background: var(--card-bg); padding:25px; border-radius: var(--radius-lg); box-shadow: var(--shadow); border:1px solid rgba(226,232,240,0.8); margin-bottom:20px; }
+        .form-servicos { display:flex; flex-direction:column; gap:12px; margin-bottom:25px; }
+        @media(min-width:600px){ .form-servicos { flex-direction:row; align-items:flex-end; } }
+        .input-control { display:flex; flex-direction:column; gap:5px; flex:1; }
+        .input-control label { font-size:12px; font-weight:700; color: var(--secondary); }
+        input, select { padding:12px 16px; border:1px solid #e2e8f0; border-radius: var(--radius-md); outline:none; width:100%; font-size:14px; transition:0.2s; }
+        input:focus { border-color: var(--primary); box-shadow:0 0 0 3px var(--primary-light); }
 
-        .auth-logo { font-size: 2rem; color: var(--primary); margin-bottom: 30px; font-weight: 800; }
-        .auth-card h2 { margin-bottom: 10px; font-size: 22px; }
-        .auth-card p { color: var(--secondary); margin-bottom: 25px; font-size: 14px; }
+        .btn-salvar { padding:12px 24px; background: var(--primary); color:white; border:none; font-weight:600; border-radius: var(--radius-md); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; height:45px; width:100%; }
+        .btn-limpar-secao { margin-top:20px; background:none; border:1px solid var(--danger); color:var(--danger); padding:8px 15px; border-radius: var(--radius-md); cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:5px; transition:0.3s; }
+        .btn-limpar-secao:hover { background: var(--danger); color:white; }
 
-        nav {
-            width: var(--sidebar-width);
-            background: #1e293b;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            position: fixed;
-            height: 100vh;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
+        .grid-horarios { display:grid; grid-template-columns: repeat(auto-fill,minmax(80px,1fr)); gap:8px; margin:20px 0; }
+        .btn-selecionavel { padding:10px; border:1px solid #e2e8f0; background:white; cursor:pointer; border-radius:8px; font-size:13px; font-weight:600; text-align:center; transition:0.2s; }
+        .btn-selecionavel.selected { background: var(--primary); color:white; border-color: var(--primary); }
+        .btn-selecionavel.indisponivel { background:#f1f5f9; color:#cbd5e1; cursor:not-allowed; border-color:#e2e8f0; }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #fff;
-        }
+        .item-servico, .item-disponivel { display:flex; justify-content:space-between; align-items:center; padding:15px; background:#f8fafc; border-radius:10px; margin-bottom:10px; border:1px solid transparent; }
+        .item-ocupado { background:white; border-radius: var(--radius-lg); border:1px solid #e2e8f0; padding:20px; margin-bottom:15px; }
+        .badge-valor { background:#dcfce7; color:#166534; padding:6px 12px; border-radius:20px; font-weight:700; font-size:14px; }
+        #alert-banner { display:none; position:fixed; top:30px; left:50%; transform:translateX(-50%); z-index:10000; padding:15px 30px; border-radius:50px; color:white; font-weight:600; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2); animation:slideDown 0.4s ease; }
 
-        .nav-item {
-            padding: 14px 18px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            margin-bottom: 8px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #94a3b8;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        main {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 40px;
-            transition: 0.3s;
-        }
-
-        .section { display: none; animation: fadeIn 0.4s ease; }
-        .section.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .header-title { margin-bottom: 30px; }
-        .header-title h1 { font-size: 24px; font-weight: 700; color: var(--text-dark); }
-
-        .card { 
-            background: var(--card-bg); 
-            padding: 25px; 
-            border-radius: var(--radius-lg); 
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            margin-bottom: 20px;
-        }
-
-        .form-servicos {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        @media (min-width: 600px) {
-            .form-servicos { flex-direction: row; align-items: flex-end; }
-        }
-
-        .input-control {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex: 1;
-            text-align: left;
-        }
-
-        .input-control label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--secondary);
-        }
-
-        input, select { 
-            padding: 12px 16px; 
-            border: 1px solid #e2e8f0; 
-            border-radius: var(--radius-md); 
-            outline: none;
-            width: 100%;
-            font-size: 14px;
-            transition: 0.2s;
-        }
-        
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-
-        .btn-salvar { 
-            padding: 12px 24px; 
-            background: var(--primary); 
-            color: white; border: none; 
-            font-weight: 600; border-radius: var(--radius-md); 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-            height: 45px;
-            width: 100%;
-        }
-
-        .btn-limpar-secao {
-            margin-top: 20px;
-            background: none;
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            padding: 8px 15px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-limpar-secao:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        .grid-horarios { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
-            gap: 8px; 
-            margin: 20px 0; 
-        }
-
-        .btn-selecionavel { 
-            padding: 10px; border: 1px solid #e2e8f0; background: white; cursor: pointer; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; transition: 0.2s;
-        }
-
-        .btn-selecionavel.selected { background: var(--primary); color: white; border-color: var(--primary); }
-        .btn-selecionavel.indisponivel { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; border-color: #e2e8f0; }
-
-        .item-servico, .item-disponivel { 
-            display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8fafc; border-radius: 10px; margin-bottom: 10px; border: 1px solid transparent;
-        }
-
-        .item-ocupado { 
-            background: white; border-radius: var(--radius-lg); border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 15px;
-        }
-
-        .badge-valor { background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 14px;}
-        
-        #alert-banner { 
-            display: none; position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 10000; padding: 15px 30px; border-radius: 50px; color: white; font-weight: 600; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); animation: slideDown 0.4s ease;
-        }
-
-        @media (max-width: 768px) {
-            nav { width: 70px; padding: 15px 10px; }
-            .nav-item span, .logo span { display: none; }
-            main { margin-left: 70px; padding: 20px; }
-            .logo { justify-content: center; }
-        }
+        @media(max-width:768px){ nav{width:70px;padding:15px 10px;} .nav-item span, .logo span{display:none;} main{margin-left:70px;padding:20px;} .logo{justify-content:center;} }
     </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="auth-container">
     <div class="auth-card" id="login-box">
         <div class="auth-logo"><i class="fas fa-bolt"></i> ProManager</div>
         <h2 id="auth-title">Bem-vindo</h2>
         <p id="auth-subtitle">Faça login para gerenciar sua agenda</p>
         
-        <div class="input-control" style="margin-bottom: 15px;">
+        <div class="input-control" style="margin-bottom:15px;">
             <label>Usuário</label>
             <input type="text" id="userInput" placeholder="Digite seu usuário">
         </div>
-        <div class="input-control" style="margin-bottom: 25px;">
+        <div class="input-control" style="margin-bottom:25px;">
             <label>Senha</label>
             <input type="password" id="passInput" placeholder="••••••••">
         </div>
         
         <button class="btn-salvar" id="mainAuthBtn" onclick="handleAuth()">Entrar no Sistema</button>
-        
-        <div id="toggleAuth" style="margin-top: 20px; font-size: 13px; color: var(--primary); cursor: pointer; font-weight: 600;" onclick="toggleAuthMode()">
+        <div id="toggleAuth" style="margin-top:20px; font-size:13px; color: var(--primary); cursor:pointer; font-weight:600;" onclick="toggleAuthMode()">
             Não tem uma conta? Cadastre-se
         </div>
     </div>
@@ -256,344 +98,241 @@
 
 <div id="alert-banner"></div>
 
+<!-- SIDEBAR -->
 <nav>
     <div class="logo"><i class="fas fa-bolt"></i> <span>ProManager</span></div>
-    <div class="nav-item active" onclick="showSection('dashboard', this)">
-        <i class="fas fa-home"></i> <span>Dashboard</span>
-    </div>
-    <div class="nav-item" onclick="showSection('config', this)">
-        <i class="fas fa-sliders-h"></i> <span>Serviços</span>
-    </div>
-    <div class="nav-item" onclick="showSection('agenda', this)">
-        <i class="fas fa-calendar-alt"></i> <span>Abrir Agenda</span>
-    </div>
-    <div class="nav-item" onclick="showSection('horarios', this)">
-        <i class="fas fa-clock"></i> <span>Horários Livres</span>
-    </div>
-    <div class="nav-item" onclick="showSection('perfil', this)">
-        <i class="fas fa-user-cog"></i> <span>Minha Conta</span>
-    </div>
-
-    <div onclick="logout()" class="nav-item" style="margin-top: auto; color: #ef4444;">
-        <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
-    </div>
-    <div class="footer-dev" style="font-size: 11px; color: #64748b; text-align: center; padding-top: 20px; border-top: 1px solid #334155;">
-        Developer: <b>UPbot®</b>
-    </div>
+    <div class="nav-item active" onclick="showSection('dashboard', this)"><i class="fas fa-home"></i> <span>Dashboard</span></div>
+    <div class="nav-item" onclick="showSection('config', this)"><i class="fas fa-sliders-h"></i> <span>Serviços</span></div>
+    <div class="nav-item" onclick="showSection('agenda', this)"><i class="fas fa-calendar-alt"></i> <span>Abrir Agenda</span></div>
+    <div class="nav-item" onclick="showSection('horarios', this)"><i class="fas fa-clock"></i> <span>Horários Livres</span></div>
+    <div class="nav-item" onclick="showSection('perfil', this)"><i class="fas fa-user-cog"></i> <span>Minha Conta</span></div>
+    <div onclick="logout()" class="nav-item" style="margin-top:auto; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></div>
+    <div class="footer-dev" style="font-size:11px;color:#64748b;text-align:center;padding-top:20px;border-top:1px solid #334155;">Developer: <b>UPbot®</b></div>
 </nav>
 
+<!-- MAIN -->
 <main>
     <section id="dashboard" class="section active">
-        <div class="header-title">
-            <h1>Próximos Atendimentos</h1>
-            <p style="color: var(--secondary)">Gerencie seus compromissos agendados.</p>
-        </div>
+        <div class="header-title"><h1>Próximos Atendimentos</h1><p style="color:var(--secondary)">Gerencie seus compromissos agendados.</p></div>
         <div id="relatorio" class="container-lista"></div>
-        <button class="btn-limpar-secao" onclick="limparApenasOcupados()">
-            <i class="fas fa-broom"></i> Limpar Histórico de Atendimentos
-        </button>
+        <button class="btn-limpar-secao" onclick="limparApenasOcupados()"><i class="fas fa-broom"></i> Limpar Histórico de Atendimentos</button>
     </section>
 
     <section id="config" class="section">
-        <div class="header-title">
-            <h1>Configurar Serviços</h1>
-        </div>
+        <div class="header-title"><h1>Configurar Serviços</h1></div>
         <div class="card">
             <div class="form-servicos">
-                <div class="input-control">
-                    <label>Nome do Serviço</label>
-                    <input type="text" id="nomeServico" placeholder="ex: Corte de Cabelo">
-                </div>
-                <div class="input-control" style="max-width: 150px;">
-                    <label>Preço (R$)</label>
-                    <input type="number" id="valorServico" placeholder="0,00">
-                </div>
-                <button class="btn-salvar" onclick="adicionarServico()">
-                    <i class="fas fa-plus"></i> Adicionar
-                </button>
+                <div class="input-control"><label>Nome do Serviço</label><input type="text" id="nomeServico" placeholder="ex: Corte de Cabelo"></div>
+                <div class="input-control" style="max-width:150px;"><label>Preço (R$)</label><input type="number" id="valorServico" placeholder="0,00"></div>
+                <button class="btn-salvar" onclick="adicionarServico()"><i class="fas fa-plus"></i> Adicionar</button>
             </div>
             <div id="listaServicos"></div>
-            <button class="btn-limpar-secao" onclick="limparApenasServicos()">
-                <i class="fas fa-trash-alt"></i> Limpar Galeria de Serviços
-            </button>
+            <button class="btn-limpar-secao" onclick="limparApenasServicos()"><i class="fas fa-trash-alt"></i> Limpar Galeria de Serviços</button>
         </div>
     </section>
 
     <section id="agenda" class="section">
-        <div class="header-title">
-            <h1>Disponibilizar Datas</h1>
-        </div>
+        <div class="header-title"><h1>Disponibilizar Datas</h1></div>
         <div class="card">
-            <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Selecione o Dia:</label>
-            <input type="date" id="dataAgenda" style="margin-bottom: 20px;" onchange="atualizarTudo()">
-            <label style="font-size: 13px; font-weight: 600;">Selecione os Horários:</label>
+            <label style="font-size:13px;font-weight:600;margin-bottom:8px;display:block;">Selecione o Dia:</label>
+            <input type="date" id="dataAgenda" style="margin-bottom:20px;" onchange="atualizarTudo()">
+            <label style="font-size:13px;font-weight:600;">Selecione os Horários:</label>
             <div class="grid-horarios" id="gridHorarios"></div>
-            <button class="btn-salvar" style="width:100%" onclick="salvarAgenda()">
-                <i class="fas fa-check-circle"></i> Publicar Horários
-            </button>
+            <button class="btn-salvar" style="width:100%" onclick="salvarAgenda()"><i class="fas fa-check-circle"></i> Publicar Horários</button>
         </div>
     </section>
 
     <section id="horarios" class="section">
-        <div class="header-title">
-            <h1>Horários Disponíveis</h1>
-        </div>
+        <div class="header-title"><h1>Horários Disponíveis</h1></div>
         <div class="card">
-            <label style="font-size: 12px; font-weight: 700; color: var(--secondary); margin-bottom: 5px; display: block;">Filtrar por data:</label>
+            <label style="font-size:12px;font-weight:700;color:var(--secondary);margin-bottom:5px;display:block;">Filtrar por data:</label>
             <input type="date" id="filtroDataDisponivel" style="margin-bottom:20px;" onchange="atualizarTudo()">
             <div id="listaDisponiveis"></div>
-            <button class="btn-limpar-secao" onclick="limparApenasDisponiveis()">
-                <i class="fas fa-calendar-times"></i> Limpar Todos os Horários Livres
-            </button>
+            <button class="btn-limpar-secao" onclick="limparApenasDisponiveis()"><i class="fas fa-calendar-times"></i> Limpar Todos os Horários Livres</button>
         </div>
     </section>
 
     <section id="perfil" class="section">
-        <div class="header-title">
-            <h1>Minha Conta</h1>
-            <p style="color: var(--secondary)">Altere suas credenciais de acesso.</p>
-        </div>
-        <div class="card" style="max-width: 500px;">
-            <div class="input-control" style="margin-bottom: 15px;">
-                <label>Novo Nome de Usuário</label>
-                <input type="text" id="newUsername" placeholder="Usuário atual">
-            </div>
-            <div class="input-control" style="margin-bottom: 25px;">
-                <label>Nova Senha</label>
-                <input type="password" id="newPassword" placeholder="••••••••">
-            </div>
-            <button class="btn-salvar" onclick="updateAccount()">
-                <i class="fas fa-save"></i> Atualizar Dados de Acesso
-            </button>
-            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
-            <button onclick="resetarTudo()" style="border: none; background: none; color: var(--danger); cursor: pointer; font-size: 13px;">
-                <i class="fas fa-power-off"></i> Reiniciar Todo o Banco de Dados
-            </button>
+        <div class="header-title"><h1>Minha Conta</h1><p style="color:var(--secondary)">Altere suas credenciais de acesso.</p></div>
+        <div class="card" style="max-width:500px;">
+            <div class="input-control" style="margin-bottom:15px;"><label>Novo Nome de Usuário</label><input type="text" id="newUsername" placeholder="Usuário atual"></div>
+            <div class="input-control" style="margin-bottom:25px;"><label>Nova Senha</label><input type="password" id="newPassword" placeholder="••••••••"></div>
+            <button class="btn-salvar" onclick="updateAccount()"><i class="fas fa-save"></i> Atualizar Dados de Acesso</button>
+            <hr style="margin:30px 0;border:0;border-top:1px solid #eee;">
+            <button onclick="resetarTudo()" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:13px;"><i class="fas fa-power-off"></i> Reiniciar Todo o Banco de Dados</button>
         </div>
     </section>
 </main>
 
-<script>
-    /* --- LÓGICA DE SEGURANÇA --- */
-    let isLoginMode = true;
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
-    function checkAuth() {
-        const session = sessionStorage.getItem('isLogged');
-        const userExists = localStorage.getItem('app_user');
-        
-        if (session) {
-            document.getElementById('auth-container').style.display = 'none';
-        } else {
-            document.getElementById('auth-container').style.display = 'flex';
-            if (!userExists) {
-                isLoginMode = false;
-                updateAuthUI();
-            }
-        }
-    }
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvsywhqsxVWaYAZG79ooBwcrCUaLuFbB4",
+    authDomain: "comunicacao-app.firebaseapp.com",
+    databaseURL: "https://comunicacao-app-default-rtdb.firebaseio.com",
+    projectId: "comunicacao-app",
+    storageBucket: "comunicacao-app.appspot.com",
+    messagingSenderId: "544901303602",
+    appId: "1:544901303602:web:05083fa6a06fc6733a5b2b"
+  };
 
-    function toggleAuthMode() {
-        isLoginMode = !isLoginMode;
-        updateAuthUI();
-    }
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-    function updateAuthUI() {
-        const title = document.getElementById('auth-title');
-        const subtitle = document.getElementById('auth-subtitle');
-        const btn = document.getElementById('mainAuthBtn');
-        const toggle = document.getElementById('toggleAuth');
+  /* --- FUNÇÕES DE DADOS --- */
+  async function carregarServicosDB() {
+      const snapshot = await get(child(ref(db), 'servicos'));
+      return snapshot.exists() ? Object.values(snapshot.val()) : [];
+  }
 
-        if (isLoginMode) {
-            title.innerText = "Bem-vindo";
-            subtitle.innerText = "Faça login para gerenciar sua agenda";
-            btn.innerText = "Entrar no Sistema";
-            toggle.innerText = "Não tem uma conta? Cadastre-se";
-        } else {
-            title.innerText = "Criar Conta";
-            subtitle.innerText = "Defina seu usuário e senha de acesso";
-            btn.innerText = "Criar e Entrar";
-            toggle.innerText = "Já tem conta? Faça login";
-        }
-    }
+  async function carregarAgendaDB() {
+      const snapshot = await get(child(ref(db), 'agenda'));
+      return snapshot.exists() ? Object.values(snapshot.val()) : [];
+  }
 
-    function handleAuth() {
-        const user = document.getElementById('userInput').value;
-        const pass = document.getElementById('passInput').value;
+  async function atualizarTudo() {
+      const servicos = await carregarServicosDB();
+      document.getElementById('listaServicos').innerHTML = servicos.map((s,i)=>`<div class="item-servico"><span><b>${s.nome}</b> • R$ ${s.valor}</span><button onclick="excluirServico('${i}')" style="border:none;background:none;color:var(--danger);cursor:pointer;"><i class="fas fa-trash-alt"></i></button></div>`).join('') || "<p style='color:gray;font-size:13px;'>Nenhum serviço cadastrado.</p>";
 
-        if (!user || !pass) return mostrarAlerta("Preencha todos os campos!", "var(--warning)");
+      const agenda = await carregarAgendaDB();
+      const ocupados = agenda.filter(i=>i.status==='ocupado');
+      document.getElementById('relatorio').innerHTML = ocupados.map(i=>`<div class="item-ocupado"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><h4 style="margin-bottom:4px; display:flex;align-items:center;gap:8px;">${i.cliente} ${i.whatsapp?`<a href="https://wa.me/55${i.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:#25d366;font-size:18px;"><i class="fab fa-whatsapp"></i></a>`:''}</h4><p style="font-size:13px;color:var(--secondary);">${i.data.split('-').reverse().join('/')} às ${i.hora}</p><p style="font-size:13px;color:var(--primary);font-weight:600;">${i.servico}</p></div><div class="badge-valor">R$ ${i.valor||'--'}</div></div></div>`).join('') || `<div style="text-align:center;padding:40px;color:#94a3b8;">Sem atendimentos registrados.</div>`;
+  }
 
-        if (isLoginMode) {
-            const stored = JSON.parse(localStorage.getItem('app_user'));
-            if (stored && stored.user === user && stored.pass === pass) {
-                sessionStorage.setItem('isLogged', 'true');
-                location.reload();
-            } else {
-                mostrarAlerta("Usuário ou senha incorretos!", "var(--danger)");
-            }
-        } else {
-            localStorage.setItem('app_user', JSON.stringify({ user, pass }));
-            sessionStorage.setItem('isLogged', 'true');
-            mostrarAlerta("Conta criada com sucesso!", "var(--success)");
-            setTimeout(() => location.reload(), 1000);
-        }
-    }
+  /* --- LOGIN, CADASTRO E CONTROLE DE SESSÃO --- */
+  let authMode = 'login';
+  const mainAuthBtn = document.getElementById('mainAuthBtn');
+  function toggleAuthMode(){
+      authMode = authMode==='login'?'signup':'login';
+      document.getElementById('auth-title').innerText = authMode==='login'?'Bem-vindo':'Cadastre-se';
+      document.getElementById('auth-subtitle').innerText = authMode==='login'?'Faça login para gerenciar sua agenda':'Crie seu acesso para usar o sistema';
+      mainAuthBtn.innerText = authMode==='login'?'Entrar no Sistema':'Criar Conta';
+  }
 
-    function logout() {
-        sessionStorage.removeItem('isLogged');
-        location.reload();
-    }
+  async function handleAuth(){
+      const user = document.getElementById('userInput').value.trim();
+      const pass = document.getElementById('passInput').value.trim();
+      if(!user||!pass){ alert("Informe usuário e senha."); return; }
 
-    function updateAccount() {
-        const user = document.getElementById('newUsername').value;
-        const pass = document.getElementById('newPassword').value;
-        if (!user || !pass) return mostrarAlerta("Preencha os novos dados!", "var(--warning)");
-        
-        localStorage.setItem('app_user', JSON.stringify({ user, pass }));
-        mostrarAlerta("Dados atualizados! Use-os no próximo login.", "var(--success)");
-        document.getElementById('newUsername').value = '';
-        document.getElementById('newPassword').value = '';
-    }
+      const dbRef = ref(db);
+      const snapshot = await get(child(dbRef, 'profissionais/'+user));
+      
+      if(authMode==='login'){
+          if(!snapshot.exists() || snapshot.val().senha!==pass){ alert("Usuário ou senha inválidos."); return; }
+          document.getElementById('auth-container').style.display='none';
+          showSection('dashboard', document.querySelector('.nav-item'));
+          atualizarTudo();
+      } else {
+          if(snapshot.exists()){ alert("Usuário já existe."); return; }
+          await set(ref(db, 'profissionais/'+user), {senha:pass});
+          alert("Conta criada com sucesso. Faça login.");
+          toggleAuthMode();
+      }
+  }
 
-    /* --- FIM LÓGICA DE SEGURANÇA --- */
+  function logout(){
+      location.reload();
+  }
 
-    function showSection(id, element) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        element.classList.add('active');
-        atualizarTudo();
-    }
+  function showSection(sectionId, el){
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      el.classList.add('active');
+      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+  }
 
-    const hoje = new Date().toISOString().split('T')[0];
-    document.getElementById('dataAgenda').setAttribute('min', hoje);
-    document.getElementById('dataAgenda').value = hoje;
+  /* --- FUNÇÕES DE SERVIÇOS --- */
+  async function adicionarServico(){
+      const nome = document.getElementById('nomeServico').value.trim();
+      const valor = document.getElementById('valorServico').value.trim();
+      if(!nome||!valor){ alert("Preencha nome e valor."); return; }
 
-    const horariosPadrao = ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "00:00"];
-    let horasSelecionadas = [];
+      const snapshot = await get(child(ref(db), 'servicos'));
+      let servicos = snapshot.exists()?snapshot.val():[];
+      servicos.push({nome,valor});
+      await set(ref(db,'servicos'), servicos);
+      document.getElementById('nomeServico').value=''; document.getElementById('valorServico').value='';
+      atualizarTudo();
+  }
 
-    function mostrarAlerta(msg, cor) {
-        const banner = document.getElementById('alert-banner');
-        banner.innerText = msg;
-        banner.style.backgroundColor = cor;
-        banner.style.display = 'block';
-        setTimeout(() => { banner.style.display = 'none'; }, 3000);
-    }
+  async function excluirServico(index){
+      const snapshot = await get(child(ref(db), 'servicos'));
+      if(!snapshot.exists()) return;
+      let servicos = snapshot.val();
+      servicos.splice(index,1);
+      await set(ref(db,'servicos'), servicos);
+      atualizarTudo();
+  }
 
-    function adicionarServico() {
-        const nome = document.getElementById('nomeServico').value;
-        const valor = document.getElementById('valorServico').value;
-        if(!nome || !valor) return mostrarAlerta("Preencha todos os campos!", "var(--warning)");
-        let servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-        servicos.push({ id: Date.now(), nome, valor });
-        localStorage.setItem('servicos', JSON.stringify(servicos));
-        document.getElementById('nomeServico').value = '';
-        document.getElementById('valorServico').value = '';
-        mostrarAlerta("Serviço adicionado!", "var(--success)");
-        atualizarTudo();
-    }
+  async function limparApenasServicos(){
+      if(confirm("Deseja realmente limpar todos os serviços?")){ await set(ref(db,'servicos'),[]); atualizarTudo(); }
+  }
 
-    function excluirServico(id) {
-        let servicos = JSON.parse(localStorage.getItem('servicos'));
-        servicos = servicos.filter(s => s.id !== id);
-        localStorage.setItem('servicos', JSON.stringify(servicos));
-        atualizarTudo();
-    }
+  /* --- HORÁRIOS --- */
+  async function salvarAgenda(){
+      const data = document.getElementById('dataAgenda').value;
+      if(!data){ alert("Escolha uma data."); return; }
 
-    function salvarAgenda() {
-        const data = document.getElementById('dataAgenda').value;
-        if(!data || horasSelecionadas.length === 0) return mostrarAlerta("Escolha data e horários!", "var(--warning)");
-        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
-        let novos = 0;
-        horasSelecionadas.forEach(hora => {
-            if(!agenda.find(i => i.data === data && i.hora === hora)) {
-                agenda.push({ id: Date.now() + Math.random(), data, hora, status: 'disponivel' });
-                novos++;
-            }
-        });
-        localStorage.setItem('agenda', JSON.stringify(agenda));
-        horasSelecionadas = [];
-        mostrarAlerta(`${novos} horários liberados!`, "var(--primary)");
-        atualizarTudo();
-    }
+      const buttons = document.querySelectorAll('.btn-selecionavel.selected');
+      if(!buttons.length){ alert("Selecione ao menos um horário."); return; }
 
-    function concluirAgendamento(id) {
-        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
-        agenda = agenda.map(i => i.id === id ? { ...i, status: 'finalizado' } : i);
-        localStorage.setItem('agenda', JSON.stringify(agenda));
-        mostrarAlerta("Atendimento concluído!", "var(--success)");
-        atualizarTudo();
-    }
+      const snapshot = await get(child(ref(db), 'agenda'));
+      let agenda = snapshot.exists()?snapshot.val():[];
+      buttons.forEach(b=>{
+          const hora = b.dataset.hora;
+          if(!agenda.some(a=>a.data===data && a.hora===hora)){
+              agenda.push({data,hora,status:'disponivel'});
+          }
+      });
+      await set(ref(db,'agenda'),agenda);
+      alert("Horários publicados com sucesso!");
+      atualizarTudo();
+  }
 
-    function cancelarAgendamento(id) {
-        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
-        // Altera o status para disponível e limpa os dados do cliente para que volte para a agenda
-        agenda = agenda.map(i => {
-            if (i.id === id) {
-                return { 
-                    ...i, 
-                    status: 'disponivel', 
-                    cliente: undefined, 
-                    whatsapp: undefined, 
-                    servico: undefined 
-                };
-            }
-            return i;
-        });
-        localStorage.setItem('agenda', JSON.stringify(agenda));
-        mostrarAlerta("Agendamento cancelado e horário liberado!", "var(--warning)");
-        atualizarTudo();
-    }
+  function atualizarHorariosGrid(){
+      const data = document.getElementById('dataAgenda').value;
+      if(!data) return;
+      const grid = document.getElementById('gridHorarios');
+      grid.innerHTML='';
+      for(let h=8; h<=20; h++){
+          ['00','30'].forEach(min=>{
+              const horaStr=`${h.toString().padStart(2,'0')}:${min}`;
+              const btn=document.createElement('div');
+              btn.className='btn-selecionavel'; btn.innerText=horaStr; btn.dataset.hora=horaStr;
+              btn.onclick=()=>btn.classList.toggle('selected');
+              grid.appendChild(btn);
+          });
+      }
+  }
 
-    function removerHorario(id) {
-        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
-        agenda = agenda.filter(i => i.id !== id);
-        localStorage.setItem('agenda', JSON.stringify(agenda));
-        mostrarAlerta("Horário removido!", "var(--danger)");
-        atualizarTudo();
-    }
+  async function atualizarDisponiveisLista(){
+      const filtro = document.getElementById('filtroDataDisponivel').value;
+      if(!filtro) return;
+      const snapshot = await get(child(ref(db), 'agenda'));
+      let agenda = snapshot.exists()?snapshot.val():[];
+      const lista = document.getElementById('listaDisponiveis');
+      const disponiveis = agenda.filter(a=>a.status==='disponivel' && a.data===filtro);
+      lista.innerHTML=disponiveis.length? disponiveis.map(d=>`<div class="item-disponivel"><b>${d.hora}</b> <button onclick="removerHorario('${d.data}','${d.hora}')" style="border:none;background:none;color:var(--danger);cursor:pointer;"><i class="fas fa-trash-alt"></i></button></div>`).join('') : `<p style='color:#64748b;font-size:13px;text-align:center;'>Nenhum horário disponível nesta data.</p>`;
+  }
 
-    function limparApenasServicos() { if(confirm('Apagar todos os serviços?')) { localStorage.removeItem('servicos'); atualizarTudo(); } }
-    function limparApenasDisponiveis() { let agenda = JSON.parse(localStorage.getItem('agenda')) || []; agenda = agenda.filter(i => i.status !== 'disponivel'); localStorage.setItem('agenda', JSON.stringify(agenda)); atualizarTudo(); }
-    function limparApenasOcupados() { if(confirm('Limpar histórico visual do dashboard?')) { let agenda = JSON.parse(localStorage.getItem('agenda')) || []; agenda = agenda.filter(i => i.status === 'ocupado' || i.status === 'disponivel'); localStorage.setItem('agenda', JSON.stringify(agenda)); atualizarTudo(); } }
-    function resetarTudo() { if(confirm('ATENÇÃO: Isso apagará todos os dados de agendamentos e serviços. Continuar?')) { localStorage.clear(); location.reload(); } }
+  async function removerHorario(data,hora){
+      const snapshot = await get(child(ref(db), 'agenda'));
+      let agenda = snapshot.exists()?snapshot.val():[];
+      agenda = agenda.map(a=>(a.data===data && a.hora===hora)?{...a,status:'ocupado'}:a);
+      await set(ref(db,'agenda'),agenda);
+      atualizarTudo();
+  }
 
-    function atualizarTudo() {
-        const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-        document.getElementById('listaServicos').innerHTML = servicos.map(s => `<div class="item-servico"><span><b>${s.nome}</b> • R$ ${s.valor}</span><button onclick="excluirServico(${s.id})" style="border:none; background:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash-alt"></i></button></div>`).join('') || "<p style='color:gray; font-size:13px;'>Nenhum serviço cadastrado.</p>";
+  function limparApenasOcupados(){ if(confirm("Limpar histórico de atendimentos?")){ get(child(ref(db),'agenda')).then(s=>{ let a=s.val()||[]; a=a.map(i=>i.status==='ocupado'?{...i,status:'disponivel',cliente:null,whatsapp:null,servico:null,valor:null}:i); set(ref(db,'agenda'),a); atualizarTudo(); }) } }
+  function limparApenasDisponiveis(){ if(confirm("Limpar horários livres?")){ get(child(ref(db),'agenda')).then(s=>{ let a=s.val()||[]; a=a.map(i=>i.status==='disponivel'?{...i,status:'ocupado'}:i); set(ref(db,'agenda'),a); atualizarTudo(); }) } }
+  function resetarTudo(){ if(confirm("Deseja resetar todo o banco de dados?")){ set(ref(db,'agenda'),[]); set(ref(db,'servicos'),[]); location.reload(); } }
 
-        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
-        const ocupados = agenda.filter(i => i.status === 'ocupado');
-        
-        document.getElementById('relatorio').innerHTML = ocupados.map(i => {
-            const srv = servicos.find(s => s.nome === i.servico);
-            const numeroWhatsApp = i.whatsapp ? i.whatsapp.replace(/\D/g, '') : '';
-            return `<div class="item-ocupado"><div style="display:flex; justify-content: space-between; align-items: flex-start;"><div>
-                <h4 style="margin-bottom:4px; display: flex; align-items: center; gap: 8px;">${i.cliente} ${i.whatsapp ? `<a href="https://wa.me/55${numeroWhatsApp}" target="_blank" style="color: #25d366; font-size: 18px;"><i class="fab fa-whatsapp"></i></a>` : ''}</h4>
-                <p style="font-size:13px; color:var(--secondary);">${i.data.split('-').reverse().join('/')} às ${i.hora}</p><p style="font-size:13px; color:var(--primary); font-weight:600;">${i.servico}</p></div><div class="badge-valor">R$ ${srv ? srv.valor : '--'}</div></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:15px;"><button class="btn-salvar" style="background:var(--success); font-size:12px;" onclick="concluirAgendamento(${i.id})"><i class="fas fa-check"></i> Concluir</button><button class="btn-salvar" style="background:var(--danger); font-size:12px;" onclick="cancelarAgendamento(${i.id})"><i class="fas fa-times"></i> Cancelar</button></div></div>`;
-        }).join('') || `<div style="text-align:center; padding: 40px; color: #94a3b8;"><p>Nenhum agendamento pendente.</p></div>`;
-
-        const filtro = document.getElementById('filtroDataDisponivel').value;
-        let disponiveis = agenda.filter(i => i.status === 'disponivel');
-        if (filtro) disponiveis = disponiveis.filter(i => i.data === filtro);
-        document.getElementById('listaDisponiveis').innerHTML = disponiveis.map(i => `<div class="item-disponivel"><span>${i.data.split('-').reverse().join('/')} às <b>${i.hora}</b></span><button onclick="removerHorario(${i.id})" style="border:none; background:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash-alt"></i></button></div>`).join('') || "<p style='text-align:center; color:gray;'>Vazio.</p>";
-
-        const grid = document.getElementById('gridHorarios');
-        const dataSelecionada = document.getElementById('dataAgenda').value;
-        grid.innerHTML = '';
-        horariosPadrao.forEach(h => {
-            const jaExiste = agenda.find(i => i.data === dataSelecionada && i.hora === h);
-            let btn = document.createElement('button'); btn.innerText = h;
-            if (jaExiste) { btn.className = 'btn-selecionavel indisponivel'; btn.disabled = true; }
-            else {
-                btn.className = 'btn-selecionavel' + (horasSelecionadas.includes(h) ? ' selected' : '');
-                btn.onclick = () => { btn.classList.toggle('selected'); if(btn.classList.contains('selected')) horasSelecionadas.push(h); else horasSelecionadas = horasSelecionadas.filter(item => item !== h); };
-            }
-            grid.appendChild(btn);
-        });
-    }
-
-    checkAuth();
-    atualizarTudo();
+  /* --- INICIALIZAÇÃO --- */
+  document.getElementById('dataAgenda').addEventListener('change',()=>{atualizarHorariosGrid(); atualizarDisponiveisLista();});
+  document.getElementById('filtroDataDisponivel').addEventListener('change',()=>{atualizarDisponiveisLista();});
 </script>
 </body>
 </html>
