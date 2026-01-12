@@ -3,20 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProManager Elite - Gestão Profissional</title>
+    <title>ProManager Elite - Agendamento Cliente</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <style>
         :root {
             --primary: #4f46e5;
             --primary-light: #eef2ff;
             --secondary: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --sidebar-width: 260px;
             --bg-app: #f1f5f9;
             --card-bg: #ffffff;
             --text-dark: #0f172a;
@@ -24,315 +18,281 @@
             --radius-md: 10px;
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Plus Jakarta Sans', sans-serif; background: var(--bg-app); color: var(--text-dark); display:flex; min-height:100vh; overflow-x:hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-app);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            padding-bottom: 40px;
+        }
+        .app-header {
+            padding: 50px 24px 35px;
+            background: var(--primary);
+            color: white;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            text-align: center;
+        }
+        .app-header h2 { font-size: 1.7rem; font-weight: 800; margin-bottom: 5px; }
+        .app-header p { opacity: 0.9; font-size: 0.95rem; }
 
-        /* LOGIN */
-        #auth-container { position: fixed; inset:0; background: linear-gradient(135deg,#1e293b 0%,#0f172a 100%); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; }
-        .auth-card { background:white; padding:40px; border-radius:24px; width:100%; max-width:400px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); text-align:center; }
-        .auth-logo { font-size:2rem; color: var(--primary); margin-bottom:30px; font-weight:800; }
-        .auth-card h2 { margin-bottom:10px; font-size:22px; }
-        .auth-card p { color: var(--secondary); margin-bottom:25px; font-size:14px; }
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin: -20px 24px 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--card-bg);
+            color: var(--secondary);
+            box-shadow: var(--shadow);
+            transition: 0.3s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
 
-        nav { width: var(--sidebar-width); background:#1e293b; color:white; display:flex; flex-direction:column; padding:20px; position:fixed; height:100vh; transition:0.3s; z-index:1000; }
-        .logo { font-size:1.5rem; font-weight:700; margin-bottom:40px; display:flex; align-items:center; gap:10px; color:#fff; }
-        .nav-item { padding:14px 18px; border-radius: var(--radius-md); cursor:pointer; margin-bottom:8px; display:flex; align-items:center; gap:12px; color:#94a3b8; transition:0.3s; }
-        .nav-item:hover, .nav-item.active { background: var(--primary); color:white; }
-        main { flex:1; margin-left: var(--sidebar-width); padding:40px; transition:0.3s; }
-        .section { display:none; animation:fadeIn 0.4s ease; }
-        .section.active { display:block; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        .content-section { display: none; padding: 0 24px; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
 
-        .header-title h1 { font-size:24px; font-weight:700; color: var(--text-dark); margin-bottom:10px; }
-        .header-title p { color: var(--secondary); font-size:14px; }
+        @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
 
-        .card { background: var(--card-bg); padding:25px; border-radius: var(--radius-lg); box-shadow: var(--shadow); border:1px solid rgba(226,232,240,0.8); margin-bottom:20px; }
-        .form-servicos { display:flex; flex-direction:column; gap:12px; margin-bottom:25px; }
-        @media(min-width:600px){ .form-servicos { flex-direction:row; align-items:flex-end; } }
-        .input-control { display:flex; flex-direction:column; gap:5px; flex:1; }
-        .input-control label { font-size:12px; font-weight:700; color: var(--secondary); }
-        input, select { padding:12px 16px; border:1px solid #e2e8f0; border-radius: var(--radius-md); outline:none; width:100%; font-size:14px; transition:0.2s; }
-        input:focus { border-color: var(--primary); box-shadow:0 0 0 3px var(--primary-light); }
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 12px 12px 36px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
 
-        .btn-salvar { padding:12px 24px; background: var(--primary); color:white; border:none; font-weight:600; border-radius: var(--radius-md); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; height:45px; width:100%; }
-        .btn-limpar-secao { margin-top:20px; background:none; border:1px solid var(--danger); color:var(--danger); padding:8px 15px; border-radius: var(--radius-md); cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:5px; transition:0.3s; }
-        .btn-limpar-secao:hover { background: var(--danger); color:white; }
+        .horario-card {
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .horario-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+        .info-hora { font-weight: 600; color: var(--text-dark); }
+        .btn-agendar {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+        }
 
-        .grid-horarios { display:grid; grid-template-columns: repeat(auto-fill,minmax(80px,1fr)); gap:8px; margin:20px 0; }
-        .btn-selecionavel { padding:10px; border:1px solid #e2e8f0; background:white; cursor:pointer; border-radius:8px; font-size:13px; font-weight:600; text-align:center; transition:0.2s; }
-        .btn-selecionavel.selected { background: var(--primary); color:white; border-color: var(--primary); }
-        .btn-selecionavel.indisponivel { background:#f1f5f9; color:#cbd5e1; cursor:not-allowed; border-color:#e2e8f0; }
+        .vazio { text-align:center; color: var(--secondary); padding:40px; border: 2px dashed #e2e8f0; border-radius: var(--radius-md); }
 
-        .item-servico, .item-disponivel { display:flex; justify-content:space-between; align-items:center; padding:15px; background:#f8fafc; border-radius:10px; margin-bottom:10px; border:1px solid transparent; }
-        .item-ocupado { background:white; border-radius: var(--radius-lg); border:1px solid #e2e8f0; padding:20px; margin-bottom:15px; }
-        .badge-valor { background:#dcfce7; color:#166534; padding:6px 12px; border-radius:20px; font-weight:700; font-size:14px; }
-        #alert-banner { display:none; position:fixed; top:30px; left:50%; transform:translateX(-50%); z-index:10000; padding:15px 30px; border-radius:50px; color:white; font-weight:600; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2); animation:slideDown 0.4s ease; }
-
-        @media(max-width:768px){ nav{width:70px;padding:15px 10px;} .nav-item span, .logo span{display:none;} main{margin-left:70px;padding:20px;} .logo{justify-content:center;} }
+        .modal-overlay {
+            display: none;
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-modal { flex:1; padding: 12px; border-radius: var(--radius-md); border:none; font-weight:600; cursor:pointer; }
+        .btn-confirm { background: var(--danger); color:white; }
+        .btn-cancel { background: #e2e8f0; color: var(--text-dark); }
     </style>
 </head>
 <body>
+<div class="app-container">
+    <div class="app-header">
+        <h2>Agendamento Online</h2>
+        <p>Rápido, fácil e sem complicações</p>
+    </div>
 
-<!-- LOGIN -->
-<div id="auth-container">
-    <div class="auth-card" id="login-box">
-        <div class="auth-logo"><i class="fas fa-bolt"></i> ProManager</div>
-        <h2 id="auth-title">Bem-vindo</h2>
-        <p id="auth-subtitle">Faça login para gerenciar sua agenda</p>
-        
-        <div class="input-control" style="margin-bottom:15px;">
-            <label>Usuário</label>
-            <input type="text" id="userInput" placeholder="Digite seu usuário">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('agendar')">Agendar</button>
+        <button class="tab-btn" onclick="switchTab('cancelar')">Meus Agendamentos</button>
+    </div>
+
+    <div id="tab-agendar" class="content-section active">
+        <div class="form-group">
+            <label>Nome Completo</label>
+            <div class="input-wrapper">
+                <i class="fa-regular fa-user"></i>
+                <input type="text" id="nomeCliente" placeholder="Ex: João Silva">
+            </div>
         </div>
-        <div class="input-control" style="margin-bottom:25px;">
-            <label>Senha</label>
-            <input type="password" id="passInput" placeholder="••••••••">
+
+        <div class="form-group">
+            <label>WhatsApp</label>
+            <div class="input-wrapper">
+                <i class="fa-brands fa-whatsapp"></i>
+                <input type="tel" id="whatsappCliente" placeholder="(00) 00000-0000">
+            </div>
         </div>
-        
-        <button class="btn-salvar" id="mainAuthBtn" onclick="handleAuth()">Entrar no Sistema</button>
-        <div id="toggleAuth" style="margin-top:20px; font-size:13px; color: var(--primary); cursor:pointer; font-weight:600;" onclick="toggleAuthMode()">
-            Não tem uma conta? Cadastre-se
+
+        <div class="form-group">
+            <label>Serviço Desejado</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-tag"></i>
+                <select id="selectServico"></select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Escolha a Data</label>
+            <div class="input-wrapper">
+                <i class="fa-regular fa-calendar"></i>
+                <input type="date" id="dataFiltro" onchange="carregarHorariosDoDia()">
+            </div>
+        </div>
+
+        <div id="listaHorarios"></div>
+    </div>
+
+    <div id="tab-cancelar" class="content-section">
+        <div class="form-group">
+            <label>Código Token</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-key"></i>
+                <input type="text" id="tokenCancelamento" placeholder="Ex: A1B2C3" style="text-transform: uppercase;">
+            </div>
+        </div>
+        <button class="btn-agendar" style="width:100%; background: var(--danger);" onclick="validarCancelamento()">Verificar Agendamento</button>
+    </div>
+</div>
+
+<div id="modalCancelamento" class="modal-overlay">
+    <div class="modal-card">
+        <i class="fa-solid fa-circle-exclamation" style="font-size: 2.5rem; color: var(--danger); margin-bottom: 15px;"></i>
+        <h3>Confirmar Cancelamento?</h3>
+        <p id="detalhesCancelamento"></p>
+        <div class="modal-buttons">
+            <button class="btn-modal btn-cancel" onclick="fecharModal()">Voltar</button>
+            <button class="btn-modal btn-confirm" onclick="confirmarExclusaoFinal()">Confirmar</button>
         </div>
     </div>
 </div>
 
-<div id="alert-banner"></div>
+<script>
+    let agendamentoParaCancelar = null;
 
-<!-- SIDEBAR -->
-<nav>
-    <div class="logo"><i class="fas fa-bolt"></i> <span>ProManager</span></div>
-    <div class="nav-item active" onclick="showSection('dashboard', this)"><i class="fas fa-home"></i> <span>Dashboard</span></div>
-    <div class="nav-item" onclick="showSection('config', this)"><i class="fas fa-sliders-h"></i> <span>Serviços</span></div>
-    <div class="nav-item" onclick="showSection('agenda', this)"><i class="fas fa-calendar-alt"></i> <span>Abrir Agenda</span></div>
-    <div class="nav-item" onclick="showSection('horarios', this)"><i class="fas fa-clock"></i> <span>Horários Livres</span></div>
-    <div class="nav-item" onclick="showSection('perfil', this)"><i class="fas fa-user-cog"></i> <span>Minha Conta</span></div>
-    <div onclick="logout()" class="nav-item" style="margin-top:auto; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></div>
-    <div class="footer-dev" style="font-size:11px;color:#64748b;text-align:center;padding-top:20px;border-top:1px solid #334155;">Developer: <b>UPbot®</b></div>
-</nav>
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        document.getElementById('tab-'+tab).classList.add('active');
+    }
 
-<!-- MAIN -->
-<main>
-    <section id="dashboard" class="section active">
-        <div class="header-title"><h1>Próximos Atendimentos</h1><p style="color:var(--secondary)">Gerencie seus compromissos agendados.</p></div>
-        <div id="relatorio" class="container-lista"></div>
-        <button class="btn-limpar-secao" onclick="limparApenasOcupados()"><i class="fas fa-broom"></i> Limpar Histórico de Atendimentos</button>
-    </section>
+    function configurarDataMinima() {
+        const hoje = new Date().toISOString().split('T')[0];
+        const input = document.getElementById('dataFiltro');
+        input.min = hoje;
+        input.value = hoje;
+        carregarHorariosDoDia();
+    }
 
-    <section id="config" class="section">
-        <div class="header-title"><h1>Configurar Serviços</h1></div>
-        <div class="card">
-            <div class="form-servicos">
-                <div class="input-control"><label>Nome do Serviço</label><input type="text" id="nomeServico" placeholder="ex: Corte de Cabelo"></div>
-                <div class="input-control" style="max-width:150px;"><label>Preço (R$)</label><input type="number" id="valorServico" placeholder="0,00"></div>
-                <button class="btn-salvar" onclick="adicionarServico()"><i class="fas fa-plus"></i> Adicionar</button>
+    function carregarServicos() {
+        const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
+        document.getElementById('selectServico').innerHTML = servicos.map(s=>`<option value="${s.nome}|${s.valor}">${s.nome} - R$ ${s.valor}</option>`).join('');
+    }
+
+    function carregarHorariosDoDia() {
+        const data = document.getElementById('dataFiltro').value;
+        const agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+        const listaH = document.getElementById('listaHorarios');
+        const disponiveis = agenda.filter(i=>i.data===data && i.status==='disponivel').sort((a,b)=>a.hora.localeCompare(b.hora));
+        listaH.innerHTML = disponiveis.length ? disponiveis.map(i=>`
+            <div class="horario-card">
+                <div class="info-hora">${i.hora}</div>
+                <button class="btn-agendar" onclick="finalizarAgendamento('${i.data}','${i.hora}')">Reservar</button>
             </div>
-            <div id="listaServicos"></div>
-            <button class="btn-limpar-secao" onclick="limparApenasServicos()"><i class="fas fa-trash-alt"></i> Limpar Galeria de Serviços</button>
-        </div>
-    </section>
+        `).join('') : '<p class="vazio">Sem horários disponíveis para esta data.</p>';
+    }
 
-    <section id="agenda" class="section">
-        <div class="header-title"><h1>Disponibilizar Datas</h1></div>
-        <div class="card">
-            <label style="font-size:13px;font-weight:600;margin-bottom:8px;display:block;">Selecione o Dia:</label>
-            <input type="date" id="dataAgenda" style="margin-bottom:20px;" onchange="atualizarTudo()">
-            <label style="font-size:13px;font-weight:600;">Selecione os Horários:</label>
-            <div class="grid-horarios" id="gridHorarios"></div>
-            <button class="btn-salvar" style="width:100%" onclick="salvarAgenda()"><i class="fas fa-check-circle"></i> Publicar Horários</button>
-        </div>
-    </section>
+    function finalizarAgendamento(data,hora){
+        const nome = document.getElementById('nomeCliente').value.trim();
+        const whatsapp = document.getElementById('whatsappCliente').value.trim();
+        if(nome.split(' ').length<2){ alert("⚠️ Digite seu nome completo"); return; }
+        if(whatsapp.length<14){ alert("⚠️ Informe um WhatsApp válido"); return; }
+        const [servicoNome, servicoValor] = document.getElementById('selectServico').value.split('|');
+        const token = Math.random().toString(36).substr(2,6).toUpperCase();
+        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+        agenda = agenda.map(i=> (i.data===data && i.hora===hora) ? {...i,status:'ocupado',cliente:nome,whatsapp,servico:servicoNome,token} : i);
+        localStorage.setItem('agenda',JSON.stringify(agenda));
+        alert(`✅ Agendamento Realizado!\nTOKEN: ${token}`);
+        carregarHorariosDoDia();
+    }
 
-    <section id="horarios" class="section">
-        <div class="header-title"><h1>Horários Disponíveis</h1></div>
-        <div class="card">
-            <label style="font-size:12px;font-weight:700;color:var(--secondary);margin-bottom:5px;display:block;">Filtrar por data:</label>
-            <input type="date" id="filtroDataDisponivel" style="margin-bottom:20px;" onchange="atualizarTudo()">
-            <div id="listaDisponiveis"></div>
-            <button class="btn-limpar-secao" onclick="limparApenasDisponiveis()"><i class="fas fa-calendar-times"></i> Limpar Todos os Horários Livres</button>
-        </div>
-    </section>
+    function validarCancelamento() {
+        const token = document.getElementById('tokenCancelamento').value.trim().toUpperCase();
+        const agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+        const agendamento = agenda.find(i=>i.token===token);
+        if(agendamento){
+            agendamentoParaCancelar = agendamento;
+            document.getElementById('detalhesCancelamento').innerHTML = `Deseja cancelar o serviço de <b>${agendamento.servico}</b> no dia <b>${agendamento.data.split('-').reverse().join('/')}</b> às <b>${agendamento.hora}</b>?`;
+            document.getElementById('modalCancelamento').style.display='flex';
+        }else alert("❌ Token inválido ou não encontrado.");
+    }
 
-    <section id="perfil" class="section">
-        <div class="header-title"><h1>Minha Conta</h1><p style="color:var(--secondary)">Altere suas credenciais de acesso.</p></div>
-        <div class="card" style="max-width:500px;">
-            <div class="input-control" style="margin-bottom:15px;"><label>Novo Nome de Usuário</label><input type="text" id="newUsername" placeholder="Usuário atual"></div>
-            <div class="input-control" style="margin-bottom:25px;"><label>Nova Senha</label><input type="password" id="newPassword" placeholder="••••••••"></div>
-            <button class="btn-salvar" onclick="updateAccount()"><i class="fas fa-save"></i> Atualizar Dados de Acesso</button>
-            <hr style="margin:30px 0;border:0;border-top:1px solid #eee;">
-            <button onclick="resetarTudo()" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:13px;"><i class="fas fa-power-off"></i> Reiniciar Todo o Banco de Dados</button>
-        </div>
-    </section>
-</main>
+    function fecharModal(){ document.getElementById('modalCancelamento').style.display='none'; agendamentoParaCancelar=null; }
+    function confirmarExclusaoFinal(){
+        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+        agenda = agenda.map(i=>i.token===agendamentoParaCancelar.token ? {...i,status:'disponivel',cliente:null,whatsapp:null,token:null,servico:null} : i);
+        localStorage.setItem('agenda',JSON.stringify(agenda));
+        fecharModal();
+        alert("✅ Cancelado com sucesso.");
+        carregarHorariosDoDia();
+    }
 
-<!-- FIREBASE -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-  import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvsywhqsxVWaYAZG79ooBwcrCUaLuFbB4",
-    authDomain: "comunicacao-app.firebaseapp.com",
-    databaseURL: "https://comunicacao-app-default-rtdb.firebaseio.com",
-    projectId: "comunicacao-app",
-    storageBucket: "comunicacao-app.appspot.com",
-    messagingSenderId: "544901303602",
-    appId: "1:544901303602:web:05083fa6a06fc6733a5b2b"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  /* --- FUNÇÕES DE DADOS --- */
-  async function carregarServicosDB() {
-      const snapshot = await get(child(ref(db), 'servicos'));
-      return snapshot.exists() ? Object.values(snapshot.val()) : [];
-  }
-
-  async function carregarAgendaDB() {
-      const snapshot = await get(child(ref(db), 'agenda'));
-      return snapshot.exists() ? Object.values(snapshot.val()) : [];
-  }
-
-  async function atualizarTudo() {
-      const servicos = await carregarServicosDB();
-      document.getElementById('listaServicos').innerHTML = servicos.map((s,i)=>`<div class="item-servico"><span><b>${s.nome}</b> • R$ ${s.valor}</span><button onclick="excluirServico('${i}')" style="border:none;background:none;color:var(--danger);cursor:pointer;"><i class="fas fa-trash-alt"></i></button></div>`).join('') || "<p style='color:gray;font-size:13px;'>Nenhum serviço cadastrado.</p>";
-
-      const agenda = await carregarAgendaDB();
-      const ocupados = agenda.filter(i=>i.status==='ocupado');
-      document.getElementById('relatorio').innerHTML = ocupados.map(i=>`<div class="item-ocupado"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><h4 style="margin-bottom:4px; display:flex;align-items:center;gap:8px;">${i.cliente} ${i.whatsapp?`<a href="https://wa.me/55${i.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:#25d366;font-size:18px;"><i class="fab fa-whatsapp"></i></a>`:''}</h4><p style="font-size:13px;color:var(--secondary);">${i.data.split('-').reverse().join('/')} às ${i.hora}</p><p style="font-size:13px;color:var(--primary);font-weight:600;">${i.servico}</p></div><div class="badge-valor">R$ ${i.valor||'--'}</div></div></div>`).join('') || `<div style="text-align:center;padding:40px;color:#94a3b8;">Sem atendimentos registrados.</div>`;
-  }
-
-  /* --- LOGIN, CADASTRO E CONTROLE DE SESSÃO --- */
-  let authMode = 'login';
-  const mainAuthBtn = document.getElementById('mainAuthBtn');
-  function toggleAuthMode(){
-      authMode = authMode==='login'?'signup':'login';
-      document.getElementById('auth-title').innerText = authMode==='login'?'Bem-vindo':'Cadastre-se';
-      document.getElementById('auth-subtitle').innerText = authMode==='login'?'Faça login para gerenciar sua agenda':'Crie seu acesso para usar o sistema';
-      mainAuthBtn.innerText = authMode==='login'?'Entrar no Sistema':'Criar Conta';
-  }
-
-  async function handleAuth(){
-      const user = document.getElementById('userInput').value.trim();
-      const pass = document.getElementById('passInput').value.trim();
-      if(!user||!pass){ alert("Informe usuário e senha."); return; }
-
-      const dbRef = ref(db);
-      const snapshot = await get(child(dbRef, 'profissionais/'+user));
-      
-      if(authMode==='login'){
-          if(!snapshot.exists() || snapshot.val().senha!==pass){ alert("Usuário ou senha inválidos."); return; }
-          document.getElementById('auth-container').style.display='none';
-          showSection('dashboard', document.querySelector('.nav-item'));
-          atualizarTudo();
-      } else {
-          if(snapshot.exists()){ alert("Usuário já existe."); return; }
-          await set(ref(db, 'profissionais/'+user), {senha:pass});
-          alert("Conta criada com sucesso. Faça login.");
-          toggleAuthMode();
-      }
-  }
-
-  function logout(){
-      location.reload();
-  }
-
-  function showSection(sectionId, el){
-      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-      el.classList.add('active');
-      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-      document.getElementById(sectionId).classList.add('active');
-  }
-
-  /* --- FUNÇÕES DE SERVIÇOS --- */
-  async function adicionarServico(){
-      const nome = document.getElementById('nomeServico').value.trim();
-      const valor = document.getElementById('valorServico').value.trim();
-      if(!nome||!valor){ alert("Preencha nome e valor."); return; }
-
-      const snapshot = await get(child(ref(db), 'servicos'));
-      let servicos = snapshot.exists()?snapshot.val():[];
-      servicos.push({nome,valor});
-      await set(ref(db,'servicos'), servicos);
-      document.getElementById('nomeServico').value=''; document.getElementById('valorServico').value='';
-      atualizarTudo();
-  }
-
-  async function excluirServico(index){
-      const snapshot = await get(child(ref(db), 'servicos'));
-      if(!snapshot.exists()) return;
-      let servicos = snapshot.val();
-      servicos.splice(index,1);
-      await set(ref(db,'servicos'), servicos);
-      atualizarTudo();
-  }
-
-  async function limparApenasServicos(){
-      if(confirm("Deseja realmente limpar todos os serviços?")){ await set(ref(db,'servicos'),[]); atualizarTudo(); }
-  }
-
-  /* --- HORÁRIOS --- */
-  async function salvarAgenda(){
-      const data = document.getElementById('dataAgenda').value;
-      if(!data){ alert("Escolha uma data."); return; }
-
-      const buttons = document.querySelectorAll('.btn-selecionavel.selected');
-      if(!buttons.length){ alert("Selecione ao menos um horário."); return; }
-
-      const snapshot = await get(child(ref(db), 'agenda'));
-      let agenda = snapshot.exists()?snapshot.val():[];
-      buttons.forEach(b=>{
-          const hora = b.dataset.hora;
-          if(!agenda.some(a=>a.data===data && a.hora===hora)){
-              agenda.push({data,hora,status:'disponivel'});
-          }
-      });
-      await set(ref(db,'agenda'),agenda);
-      alert("Horários publicados com sucesso!");
-      atualizarTudo();
-  }
-
-  function atualizarHorariosGrid(){
-      const data = document.getElementById('dataAgenda').value;
-      if(!data) return;
-      const grid = document.getElementById('gridHorarios');
-      grid.innerHTML='';
-      for(let h=8; h<=20; h++){
-          ['00','30'].forEach(min=>{
-              const horaStr=`${h.toString().padStart(2,'0')}:${min}`;
-              const btn=document.createElement('div');
-              btn.className='btn-selecionavel'; btn.innerText=horaStr; btn.dataset.hora=horaStr;
-              btn.onclick=()=>btn.classList.toggle('selected');
-              grid.appendChild(btn);
-          });
-      }
-  }
-
-  async function atualizarDisponiveisLista(){
-      const filtro = document.getElementById('filtroDataDisponivel').value;
-      if(!filtro) return;
-      const snapshot = await get(child(ref(db), 'agenda'));
-      let agenda = snapshot.exists()?snapshot.val():[];
-      const lista = document.getElementById('listaDisponiveis');
-      const disponiveis = agenda.filter(a=>a.status==='disponivel' && a.data===filtro);
-      lista.innerHTML=disponiveis.length? disponiveis.map(d=>`<div class="item-disponivel"><b>${d.hora}</b> <button onclick="removerHorario('${d.data}','${d.hora}')" style="border:none;background:none;color:var(--danger);cursor:pointer;"><i class="fas fa-trash-alt"></i></button></div>`).join('') : `<p style='color:#64748b;font-size:13px;text-align:center;'>Nenhum horário disponível nesta data.</p>`;
-  }
-
-  async function removerHorario(data,hora){
-      const snapshot = await get(child(ref(db), 'agenda'));
-      let agenda = snapshot.exists()?snapshot.val():[];
-      agenda = agenda.map(a=>(a.data===data && a.hora===hora)?{...a,status:'ocupado'}:a);
-      await set(ref(db,'agenda'),agenda);
-      atualizarTudo();
-  }
-
-  function limparApenasOcupados(){ if(confirm("Limpar histórico de atendimentos?")){ get(child(ref(db),'agenda')).then(s=>{ let a=s.val()||[]; a=a.map(i=>i.status==='ocupado'?{...i,status:'disponivel',cliente:null,whatsapp:null,servico:null,valor:null}:i); set(ref(db,'agenda'),a); atualizarTudo(); }) } }
-  function limparApenasDisponiveis(){ if(confirm("Limpar horários livres?")){ get(child(ref(db),'agenda')).then(s=>{ let a=s.val()||[]; a=a.map(i=>i.status==='disponivel'?{...i,status:'ocupado'}:i); set(ref(db,'agenda'),a); atualizarTudo(); }) } }
-  function resetarTudo(){ if(confirm("Deseja resetar todo o banco de dados?")){ set(ref(db,'agenda'),[]); set(ref(db,'servicos'),[]); location.reload(); } }
-
-  /* --- INICIALIZAÇÃO --- */
-  document.getElementById('dataAgenda').addEventListener('change',()=>{atualizarHorariosGrid(); atualizarDisponiveisLista();});
-  document.getElementById('filtroDataDisponivel').addEventListener('change',()=>{atualizarDisponiveisLista();});
+    configurarDataMinima();
+    carregarServicos();
 </script>
 </body>
 </html>
